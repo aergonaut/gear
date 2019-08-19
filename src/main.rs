@@ -14,4 +14,7 @@ enum Gear {
 
 fn main() {
     let program = Gear::from_args();
+    match program {
+        Gear::Run { command, args } => println!("Running {} with args {:?}", command, args),
+    }
 }
