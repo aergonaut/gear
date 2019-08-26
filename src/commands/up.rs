@@ -1,6 +1,6 @@
 use super::Command;
+use crate::errors::Result;
 use log::info;
-use std::error::Error;
 
 pub struct Up;
 
@@ -11,7 +11,7 @@ impl Up {
 }
 
 impl Command for Up {
-    fn run(self) -> Result<(), Box<dyn Error>> {
+    fn run(self) -> Result<()> {
         info!("Unimplemented!");
         Ok(())
     }
