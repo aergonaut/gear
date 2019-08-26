@@ -1,5 +1,15 @@
 # `gear`
 
+`gear` is a CLI tool to improver developer QOL.
+
+## Installation
+
+### From source
+
+1. Clone the repository.
+2. Build with `cargo build --release`
+3. Move `target/release/gear` somewhere in your path
+
 ## Configuration
 
 `gear` will search for a `gear.toml` file, starting in the current directory and
