@@ -3,7 +3,7 @@ name: Rust
 on:
   push:
     branches:
-     - master
+      - master
 
 jobs:
   build:
@@ -12,12 +12,19 @@ jobs:
     strategy:
       matrix:
         os:
-        - ubuntu-latest
-        - macOS-latest
+          - ubuntu-latest
+          - macOS-latest
+      fail-fast: false
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v1
+
+      - name: Install Rust
+        if: contains(matrix.os, "macOS")
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && rustup toolchain install stable
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
