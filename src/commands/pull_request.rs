@@ -19,16 +19,26 @@ pub struct PullRequest {
     base: Option<String>,
     config: Option<ProjectConfig>,
     copy: bool,
+    host: Option<String>,
+    repository: Option<String>,
 }
 
 impl PullRequest {
-    pub fn new(head: Option<String>, base: Option<String>, copy: bool) -> PullRequest {
+    pub fn new(
+        head: Option<String>,
+        base: Option<String>,
+        host: Option<String>,
+        repository: Option<String>,
+        copy: bool,
+    ) -> PullRequest {
         let config = ProjectConfig::load().ok();
         PullRequest {
             head: head,
             base: base,
             config: config,
             copy: copy,
+            host: host,
+            repository: repository,
         }
     }
 
@@ -122,14 +132,18 @@ impl PullRequest {
                 None
             })
     }
-}
 
-impl Command for PullRequest {
-    fn run(self) -> Result<()> {
+    fn url(&self, base_branch: &str, head_branch: &str) -> Result<String> {
+        if let Some(host) = self.host.as_ref() {
+            if let Some(repo) = self.repository.as_ref() {
+                return Ok(format!(
+                    "https://{}/{}/{}...{}?expand=1",
+                    host, repo, base_branch, head_branch
+                ));
+            }
+        }
+
         let repo = git2::Repository::discover(std::env::current_dir()?)?;
-
-        let head_branch = self.head()?;
-        let base_branch = self.base()?;
 
         let origin_remote = repo.find_remote("origin")?;
         let origin_url = origin_remote
@@ -157,6 +171,17 @@ impl Command for PullRequest {
             "https://{}/{}/compare/{}...{}?expand=1",
             host, repo, base_branch, head_branch
         );
+
+        Ok(url)
+    }
+}
+
+impl Command for PullRequest {
+    fn run(self) -> Result<()> {
+        let head_branch = self.head()?;
+        let base_branch = self.base()?;
+
+        let url = self.url(&base_branch, &head_branch)?;
 
         if self.copy {
             let mut cb: clipboard::ClipboardContext = clipboard::ClipboardProvider::new()
