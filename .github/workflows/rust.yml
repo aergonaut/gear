@@ -29,9 +29,9 @@ jobs:
           cargo test --verbose
 
       - name: Build
-        if: not(contains(matrix.os, 'macOS'))
+        if: "!(contains(matrix.os, 'macOS'))"
         run: cargo build --verbose
 
       - name: Run tests
-        if: not(contains(matrix.os, 'macOS'))
+        if: "!(contains(matrix.os, 'macOS'))"
         run: cargo test --verbose
