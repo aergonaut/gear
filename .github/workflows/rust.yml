@@ -21,10 +21,17 @@ jobs:
 
       - name: Install Rust
         if: contains(matrix.os, 'macOS')
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source $HOME/.cargo/env && rustup toolchain install stable
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source $HOME/.cargo/env
+          rustup toolchain install stable
+          cargo build --verbose
+          cargo test --verbose
 
       - name: Build
+        if: not(contains(matrix.os, 'macOS'))
         run: cargo build --verbose
 
       - name: Run tests
+        if: not(contains(matrix.os, 'macOS'))
         run: cargo test --verbose

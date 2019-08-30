@@ -71,7 +71,10 @@ impl PullRequest {
                     .ok()
                     .as_ref()
                     .and_then(|head| self.infer_base_branch_from_head(head))
-                    .or(Some("master"))
+                    .or_else(|| {
+                        log::warn!("Defaulting to master as base");
+                        Some("master")
+                    })
                     .map(|s| s.to_owned())
             })
             .ok_or_else(|| format_err!("Could not infer base branch"))

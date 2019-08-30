@@ -68,10 +68,10 @@ enum Subcommand {
 
 fn main() -> crate::errors::Result<()> {
     let program = Gear::from_args();
-    match program.cmd {
+    let result = match program.cmd {
         Subcommand::Up { opts } => {
             opts.log.log_all(Some(opts.verbose.log_level()))?;
-            commands::Up::new().run().unwrap()
+            commands::Up::new().run()
         }
         Subcommand::PullRequest {
             opts,
@@ -82,12 +82,14 @@ fn main() -> crate::errors::Result<()> {
             repository,
         } => {
             opts.log.log_all(Some(opts.verbose.log_level()))?;
-            commands::PullRequest::new(head, base, host, repository, copy)
-                .run()
-                .unwrap()
+            commands::PullRequest::new(head, base, host, repository, copy).run()
         }
-        _ => log::info!("Command not implemented"),
+        _ => Err(failure::format_err!("Command not implemented")),
     };
+
+    if let Err(error) = result {
+        log::error!("{}", error);
+    }
 
     Ok(())
 }

@@ -4,6 +4,10 @@
 
 ## Installation
 
+### With `cargo install`
+
+Run `cargo install --git https://github.com/aergonaut/gear.git`
+
 ### From source
 
 1. Clone the repository.
