@@ -12,7 +12,22 @@ lazy_static! {
         Regex::new("https?://(?P<host>[^/]+)/(?P<repo>.+).git").unwrap();
 }
 
-/// Struct representing the `pr` command.
+/// Open a new PR on GitHub for the current branch.
+///
+/// This command will use your web browser to open the GitHub UI for creating a new Pull Request.
+/// By default, your PR's base branch will be your repository's `master` branch. However, `gear`
+/// can be configured to infer the appropriate base branch by inspecting the current branch name.
+/// This is useful for workflows where PRs may be merged to multiple branches, for example if a
+/// project maintains multiple active releases.
+///
+/// If the `commands.pr.base_pattern` configuration option is set to a regular expression, `gear`
+/// will attempt to match the regular expression to the current branch name. The regular expression
+/// must produce one capture, which will be used as the appropriate base branch.
+///
+/// For example: If your project's maintains several releases on branches named like `release/v25`
+/// and you name your PR branches like `release/v25/fix-critical-bug`, you could use a pattern like
+/// `^(release/v\d+)` to extract the release branch's name from the PR branch name. Then all PR
+/// branches would automatically target the correct release branch, based on their name.
 #[derive(Debug)]
 pub struct PullRequest {
     head: Option<String>,

@@ -1,7 +1,7 @@
 use crate::commands::Command;
 use structopt::StructOpt;
 
-mod commands;
+pub mod commands;
 mod config;
 mod errors;
 mod util;
