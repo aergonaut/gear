@@ -19,19 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install Rust (macOS)
-        if: contains(matrix.os, 'macOS')
+      - name: Install Rust
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          source $HOME/.cargo/env
-          rustup toolchain install stable
-          cargo build --verbose
-          cargo test --verbose
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo ::add-path::$HOME/.cargo/bin
 
-      - name: Build (Ubuntu)
-        if: "!(contains(matrix.os, 'macOS'))"
+      - name: Build
         run: cargo build --verbose
 
-      - name: Run tests (Ubuntu)
-        if: "!(contains(matrix.os, 'macOS'))"
+      - name: Run tests
         run: cargo test --verbose
