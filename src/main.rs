@@ -49,12 +49,8 @@ enum Subcommand {
             help = "Optional. The head branch for the PR. [default: HEAD]"
         )]
         head: Option<String>,
-        #[structopt(
-            short = "c",
-            long = "copy",
-            help = "Copy URL to clipboard instead of opening."
-        )]
-        copy: bool,
+        #[structopt(long = "print", help = "Print URL instead of opening.")]
+        print: bool,
         #[structopt(long = "host", help = "Optional. The base URL to GitHub.")]
         host: Option<String>,
         #[structopt(
@@ -76,13 +72,13 @@ fn main() -> crate::errors::Result<()> {
         Subcommand::PullRequest {
             opts,
             base,
-            copy,
+            print,
             head,
             host,
             repository,
         } => {
             opts.log.log_all(Some(opts.verbose.log_level()))?;
-            commands::PullRequest::new(head, base, host, repository, copy).run()
+            commands::PullRequest::new(head, base, host, repository, print).run()
         }
         _ => Err(failure::format_err!("Command not implemented")),
     };

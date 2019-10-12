@@ -1,7 +1,6 @@
 use super::Command;
 use crate::config::ProjectConfig;
 use crate::errors::Result;
-use clipboard::ClipboardProvider;
 use failure::format_err;
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -33,7 +32,7 @@ pub struct PullRequest {
     head: Option<String>,
     base: Option<String>,
     config: Option<ProjectConfig>,
-    copy: bool,
+    print: bool,
     host: Option<String>,
     repository: Option<String>,
 }
@@ -44,14 +43,14 @@ impl PullRequest {
         base: Option<String>,
         host: Option<String>,
         repository: Option<String>,
-        copy: bool,
+        print: bool,
     ) -> PullRequest {
         let config = ProjectConfig::load().ok();
         PullRequest {
             head: head,
             base: base,
             config: config,
-            copy: copy,
+            print: print,
             host: host,
             repository: repository,
         }
@@ -201,12 +200,8 @@ impl Command for PullRequest {
 
         let url = self.url(&base_branch, &head_branch)?;
 
-        if self.copy {
-            let mut cb: clipboard::ClipboardContext = clipboard::ClipboardProvider::new()
-                .map_err(|_| format_err!("Could not get clipboard context"))?;
-            cb.set_contents(url)
-                .map_err(|_| format_err!("Could not copy to clipboard"))?;
-            log::info!("Copied to clipboard");
+        if self.print {
+            println!("{}", url);
         } else {
             open::that(&url)?;
             log::info!("Opening {}", url);
