@@ -39,7 +39,7 @@ enum Subcommand {
 
 By default, this command will try to infer the base branch for your PR from the name of your current HEAD, and then open your browser to a GitHub URL where you can finish opening the Pull Request.
 
-You can override the base or head branch with options, and you can choose to copy the URL to your clipboard instead of opening it. See the detailed help for more information.
+You can override the base or head branch with options, and you can choose to print the URL to your terminal instead of opening it. See the detailed help for more information.
 "#
     )]
     PullRequest {

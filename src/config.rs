@@ -1,6 +1,5 @@
 use crate::util;
 use std::env;
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -11,12 +10,12 @@ pub struct ProjectConfig {
 }
 
 impl ProjectConfig {
-    pub fn load() -> Result<ProjectConfig, Box<dyn Error>> {
+    pub fn load() -> crate::errors::Result<ProjectConfig> {
         let cwd = env::current_dir()?;
         ProjectConfig::load_from(&cwd)
     }
 
-    pub fn load_from(path: &Path) -> Result<ProjectConfig, Box<dyn Error>> {
+    pub fn load_from(path: &Path) -> crate::errors::Result<ProjectConfig> {
         let mut contents = String::new();
         let config_path = util::ancestors(path)
             .find(|path| std::fs::metadata(&path.join("gear.toml")).is_ok())
