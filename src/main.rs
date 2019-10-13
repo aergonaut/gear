@@ -1,3 +1,7 @@
+//! `gear` CLI
+
+#![deny(missing_docs)]
+
 use crate::commands::Command;
 use structopt::StructOpt;
 
@@ -31,7 +35,12 @@ enum Subcommand {
     #[structopt(
         name = "pr",
         about = "Open a Pull Request for the current branch",
-        long_about = "Open a Pull Request for the current branch.\n\nBy default, this command will try to infer the base branch for your PR from the name of your current HEAD, and then open your browser to a GitHub URL where you can finish opening the Pull Request.\n\nYou can override the base or head branch with options, and you can choose to copy the URL to your clipboard instead of opening it. See the detailed help for more information."
+        long_about = r#"Open a Pull Request for the current branch.
+
+By default, this command will try to infer the base branch for your PR from the name of your current HEAD, and then open your browser to a GitHub URL where you can finish opening the Pull Request.
+
+You can override the base or head branch with options, and you can choose to copy the URL to your clipboard instead of opening it. See the detailed help for more information.
+"#
     )]
     PullRequest {
         #[structopt(flatten)]
@@ -40,7 +49,9 @@ enum Subcommand {
             short = "b",
             long = "base",
             help = "Optional. The base branch for the PR.",
-            long_help = "Optional. The base branch for the PR.\n\nIf not specified, inferred from the head branch name via pattern matching, or `master`."
+            long_help = r#"Optional. The base branch for the PR.
+
+If not specified, inferred from the head branch name via pattern matching, or `master`."#
         )]
         base: Option<String>,
         #[structopt(
@@ -56,7 +67,9 @@ enum Subcommand {
         #[structopt(
             long = "repo",
             help = "Optional. The GitHub repository to open the PR on (e.g. Octocat/Spoon-Knife).",
-            long_help = "Optional. The GitHub repository to open the PR on (e.g. Octocat/Spoon-Knife).\n\nIf not specified, inferred from the `origin` remote, or configuration."
+            long_help = r#"Optional. The GitHub repository to open the PR on (e.g. Octocat/Spoon-Knife).
+
+If not specified, inferred from the `origin` remote, or configuration."#
         )]
         repository: Option<String>,
     },

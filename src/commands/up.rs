@@ -8,7 +8,7 @@ use log::info;
 pub struct Up;
 
 impl Up {
-    pub fn new() -> Up {
+    pub(crate) fn new() -> Up {
         Up
     }
 }

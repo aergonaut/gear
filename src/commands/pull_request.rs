@@ -19,14 +19,29 @@ lazy_static! {
 /// This is useful for workflows where PRs may be merged to multiple branches, for example if a
 /// project maintains multiple active releases.
 ///
-/// If the `commands.pr.base_pattern` configuration option is set to a regular expression, `gear`
-/// will attempt to match the regular expression to the current branch name. The regular expression
-/// must produce one capture, which will be used as the appropriate base branch.
+/// # Configuration
 ///
-/// For example: If your project's maintains several releases on branches named like `release/v25`
-/// and you name your PR branches like `release/v25/fix-critical-bug`, you could use a pattern like
-/// `^(release/v\d+)` to extract the release branch's name from the PR branch name. Then all PR
-/// branches would automatically target the correct release branch, based on their name.
+/// ## `commands.pr.base_pattern`
+///
+/// If this option is set to a regular expression, `gear` will use the regex to infer the base
+/// branch by matching the current head branch.
+///
+/// The regular expression must produce one capture. It may either be the first positional capture,
+/// or it may be a capture named `base`.
+///
+/// If the regular expression does not match or does not produce any captures, then `master` will
+/// be used as the default.
+///
+/// # Examples
+///
+/// ```plain
+/// $ cat gear.toml
+/// [commands.pr]
+/// base_pattern = "^(release/v\d+)"
+/// $ git branch
+/// release/v25/fix-critical-bug
+/// $ gear pr --print
+/// https://github.com/aergonaut/gear/compare/release/v25...release/v25/fix-critical-bug?expand=1
 #[derive(Debug)]
 pub struct PullRequest {
     head: Option<String>,
@@ -38,7 +53,7 @@ pub struct PullRequest {
 }
 
 impl PullRequest {
-    pub fn new(
+    pub(crate) fn new(
         head: Option<String>,
         base: Option<String>,
         host: Option<String>,
