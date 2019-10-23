@@ -26,12 +26,12 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
       - name: Build
-        run: cargo build --release --verbose --target x86_64-unknown-linux-musl
+        run: cargo build --release --verbose
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: dist_linux
-          path: target/x86_64-unknown-linux-musl/release/gear
+          path: target/release/gear
   build_macos:
     name: Build macOS
     runs-on: macOS-latest
