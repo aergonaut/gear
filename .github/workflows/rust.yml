@@ -6,26 +6,49 @@ on:
       - master
 
 jobs:
-  build:
-    name: Build ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
     strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - macOS-latest
       fail-fast: false
-
     steps:
       - uses: actions/checkout@v1
-
       - name: Install Rust
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
           echo ::add-path::$HOME/.cargo/bin
-
-      - name: Build
-        run: cargo build --verbose
-
+      - name: Add Musl target
+        run: rustup target add x86_64-unknown-linux-musl
+      - name: Add musl-tools
+        run: |
+          sudo apt update -y
+          sudo apt install musl-tools -y
       - name: Run tests
         run: cargo test --verbose
+      - name: Build
+        run: cargo build --release --verbose --target x86_64-unknown-linux-musl
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: dist_linux
+          path: target/x86_64-unknown-linux-musl/release/gear
+  build_macos:
+    name: Build macOS
+    runs-on: macOS-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo ::add-path::$HOME/.cargo/bin
+      - name: Run tests
+        run: cargo test --verbose
+      - name: Build
+        run: cargo build --release --verbose
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: dist_macos
+          path: target/release/gear
