@@ -66,6 +66,7 @@ jobs:
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static
       - name: Upload artifact
+        uses: actions/upload-artifact@master
         with:
           name: dist_windows
           path: target/release/windows
