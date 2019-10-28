@@ -91,7 +91,7 @@ jobs:
           chmod +x ./dist_linux/gear
           zip --junk-paths gear-macos ./dist_macos/gear
           zip --junk-paths gear-linux ./dist_linux/gear
-          zip --junk-paths gear-windows ./dist_windows/gear
+          zip --junk-paths gear-windows ./dist_windows/gear.exe
       - name: Create Release
         id: create_release
         uses: actions/create-release@master
