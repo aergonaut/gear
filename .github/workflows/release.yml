@@ -1,0 +1,100 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo ::add-path::$HOME/.cargo/bin
+      - name: Add Musl target
+        run: rustup target add x86_64-unknown-linux-musl
+      - name: Add musl-tools
+        run: |
+          sudo apt update -y
+          sudo apt install musl-tools -y
+      - name: Build
+        run: cargo build --release --verbose
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: dist_linux
+          path: target/release/gear
+  build_macos:
+    name: Build macOS
+    runs-on: macOS-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo ::add-path::$HOME/.cargo/bin
+      - name: Build
+        run: cargo build --release --verbose
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: dist_macos
+          path: target/release/gear
+  release:
+    needs:
+      - build_linux
+      - build_macos
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download macOS artifact
+        uses: actions/download-artifact@master
+        with:
+          name: dist_macos
+      - name: Download Linux artifact
+        uses: actions/download-artifact@master
+        with:
+          name: dist_linux
+      - name: Create release archives
+        run: |
+          set -ex
+          chmod +x ./dist_macos/gear
+          chmod +x ./dist_linux/gear
+          zip --junk-paths gear-macos ./dist_macos/gear
+          zip --junk-paths gear-linux ./dist_linux/gear
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+      - name: Upload macOS build
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./gear-macos.zip
+          asset_name: gear-macos.zip
+          asset_content_type: application/zip
+      - name: Upload Linux build
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./gear-linux.zip
+          asset_name: gear-linux.zip
+          asset_content_type: application/zip
