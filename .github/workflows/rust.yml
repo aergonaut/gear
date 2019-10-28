@@ -52,3 +52,20 @@ jobs:
         with:
           name: dist_macos
           path: target/release/gear
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run tests
+        run: cargo test --verbose
+      - name: Build
+        run: cargo build --release --verbose
+        env:
+          RUSTFLAGS: -Ctarget-feature=+crt-static
+      - name: Upload artifact
+        with:
+          name: dist_windows
+          path: target/release/windows
