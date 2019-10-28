@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Verbosity","Easily add a `--verbose` flag to CLIs using Structopt"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["PullRequest","Open a new PR on GitHub for the current branch."]]});

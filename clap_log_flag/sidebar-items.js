@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Log","Add log functionality to Structopt."]]});

@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `duct` crate."><meta name="keywords" content="rust, rustlang, rust-lang, duct"><title>duct - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../duct/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate duct</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all duct's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'duct', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/duct/lib.rs.html#1-1942' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>duct</a></span></h1><div class='docblock'><p>A cross-platform library for running child processes and building
+pipelines.</p>
+<p><code>duct</code> wants to make shelling out in Rust as easy and flexible as it is in
+Bash. It takes care of <a href="https://github.com/oconnor663/duct.py/blob/master/spec.md">gotchas and
+inconsistencies</a>
+in the way different platforms shell out. And it's a cross-language library;
+the <a href="https://github.com/oconnor663/duct.py">original implementation</a> is in
+Python, with an identical API.</p>
+<ul>
+<li><a href="https://docs.rs/duct">Docs</a></li>
+<li><a href="https://crates.io/crates/duct">Crate</a></li>
+<li><a href="https://github.com/oconnor663/duct.rs">Repo</a></li>
+</ul>
+<h1 id="changelog" class="section-header"><a href="#changelog">Changelog</a></h1>
+<ul>
+<li>Version 0.11 introduced the <code>before_spawn</code> method.</li>
+<li>Version 0.10 changed how environment variable casing is handled on Windows.
+See the docs for <code>env_remove</code>.</li>
+<li>Version 0.9 removed the <code>sh</code> function. It now lives in its own crate, <code>duct_sh</code>.</li>
+</ul>
+<h1 id="example" class="section-header"><a href="#example">Example</a></h1>
+<p><code>duct</code> tries to be as concise as possible, so that you don't wish you were
+back writing shell scripts. At the same time, it's explicit about what
+happens to output, and strict about error codes in child processes.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="comment">// Read the name of the current git branch. If git exits with an error</span>
+<span class="comment">// code here (because we&#39;re not in a git repo, for example), `read` will</span>
+<span class="comment">// return an error too.</span>
+<span class="kw">let</span> <span class="ident">current_branch</span> <span class="op">=</span> <span class="macro">cmd</span><span class="macro">!</span>(<span class="string">&quot;git&quot;</span>, <span class="string">&quot;symbolic-ref&quot;</span>, <span class="string">&quot;--short&quot;</span>, <span class="string">&quot;HEAD&quot;</span>).<span class="ident">read</span>()<span class="question-mark">?</span>;
+
+<span class="comment">// Log the current branch, with git taking over the terminal as usual.</span>
+<span class="comment">// The `cmd` function works just like the `cmd!` macro, but it takes a</span>
+<span class="comment">// collection instead of a variable list of arguments.</span>
+<span class="kw">let</span> <span class="ident">args</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[<span class="string">&quot;log&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">current_branch</span>];
+<span class="ident">cmd</span>(<span class="string">&quot;git&quot;</span>, <span class="ident">args</span>).<span class="ident">run</span>()<span class="question-mark">?</span>;
+
+<span class="comment">// Log again, but this time read the output from a pipe of our own. We</span>
+<span class="comment">// use the os_pipe crate to create the pipe, but any type implementing</span>
+<span class="comment">// IntoRawFd works here, including File.</span>
+<span class="kw">let</span> (<span class="ident">pipe_reader</span>, <span class="ident">pipe_writer</span>) <span class="op">=</span> <span class="ident">os_pipe</span>::<span class="ident">pipe</span>()<span class="question-mark">?</span>;
+<span class="kw">let</span> <span class="ident">child</span> <span class="op">=</span> <span class="macro">cmd</span><span class="macro">!</span>(<span class="string">&quot;git&quot;</span>, <span class="string">&quot;log&quot;</span>, <span class="string">&quot;--oneline&quot;</span>).<span class="ident">stdout_handle</span>(<span class="ident">pipe_writer</span>).<span class="ident">start</span>()<span class="question-mark">?</span>;
+<span class="kw">for</span> <span class="ident">line</span> <span class="kw">in</span> <span class="ident">BufReader</span>::<span class="ident">new</span>(<span class="ident">pipe_reader</span>).<span class="ident">lines</span>() {
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">line</span><span class="question-mark">?</span>.<span class="ident">contains</span>(<span class="string">&quot;heck&quot;</span>), <span class="string">&quot;profanity filter triggered&quot;</span>);
+}</pre></div>
+<p><code>duct</code> uses <a href="https://github.com/oconnor663/os_pipe.rs"><code>os_pipe</code></a>
+internally, and the docs for that one include a <a href="https://docs.rs/os_pipe#example">big
+example</a> that takes a dozen lines of code
+to read both stdout and stderr from a child process. <code>duct</code> can do that in
+one (moderately long) line:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">cmd</span><span class="macro">!</span>(<span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo foo &amp;&amp; echo bar 2&gt;&amp;1&quot;</span>).<span class="ident">stderr_to_stdout</span>().<span class="ident">read</span>().<span class="ident">unwrap</span>();
+
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">output</span>.<span class="ident">split_whitespace</span>().<span class="ident">eq</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>]));</pre></div>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr class='module-item'><td><a class="mod" href="unix/index.html" title='duct::unix mod'>unix</a></td><td class='docblock-short'><p>Unix-specific extensions to duct, for sending signals.</p>
+</td></tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table><tr class='module-item'><td><a class="macro" href="macro.cmd.html" title='duct::cmd macro'>cmd</a></td><td class='docblock-short'><p>Create a command with any number of of positional arguments, which may be
+different types (anything that implements
+<a href="https://doc.rust-lang.org/std/convert/trait.From.html"><code>Into&lt;OsString&gt;</code></a>).
+See also the <a href="fn.cmd.html"><code>cmd</code></a> function, which takes a collection of
+arguments.</p>
+</td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.Expression.html" title='duct::Expression struct'>Expression</a></td><td class='docblock-short'><p>The central objects in <code>duct</code>, Expressions are created with
+<a href="fn.cmd.html"><code>cmd</code></a> or <a href="macro.cmd.html"><code>cmd!</code></a>, combined with
+<a href="struct.Expression.html#method.pipe"><code>pipe</code></a> or
+<a href="struct.Expression.html#method.then"><code>then</code></a>, and finally executed with
+<a href="struct.Expression.html#method.start"><code>start</code></a>,
+<a href="struct.Expression.html#method.run"><code>run</code></a>, or
+<a href="struct.Expression.html#method.read"><code>read</code></a>. They also support several
+methods to control their execution, like
+<a href="struct.Expression.html#method.input"><code>input</code></a>,
+<a href="struct.Expression.html#method.env"><code>env</code></a>, and
+<a href="struct.Expression.html#method.unchecked"><code>unchecked</code></a>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Handle.html" title='duct::Handle struct'>Handle</a></td><td class='docblock-short'><p>A handle to a running expression, returned by the
+<a href="struct.Expression.html#method.start"><code>start</code></a> method. Calling <code>start</code>
+followed by <a href="struct.Handle.html#method.output"><code>output</code></a> on the handle is
+equivalent to <a href="struct.Expression.html#method.run"><code>run</code></a>. Note that unlike
+<a href="https://doc.rust-lang.org/std/process/struct.Child.html"><code>std::process::Child</code></a>,
+most of the methods on <code>Handle</code> take <code>&amp;self</code> rather than <code>&amp;mut self</code>, and a
+<code>Handle</code> may be shared between multiple threads.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.ToExecutable.html" title='duct::ToExecutable trait'>ToExecutable</a></td><td class='docblock-short'><p>An implementation detail of <a href="fn.cmd.html"><code>cmd</code></a>, to distinguish paths from
+other string types.</p>
+</td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.cmd.html" title='duct::cmd fn'>cmd</a></td><td class='docblock-short'><p>Create a command given a program name and a collection of arguments. See
+also the <a href="macro.cmd.html"><code>cmd!</code></a> macro, which doesn't require a collection.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "duct";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
