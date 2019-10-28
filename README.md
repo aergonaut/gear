@@ -1,8 +1,20 @@
 # `gear`
 
-`gear` is a CLI tool to improver developer QOL.
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aergonaut/gear?include_prereleases&label=latest%20release)
+
+`gear` is a CLI tool to improve developer QOL.
 
 ## Installation
+
+### Binary releases
+
+Binary releases are available for macOS and Linux on the [Releases][] tab.
+
+[releases]: https://github.com/aergonaut/gear/releases
+
+1. Download the appropriate release asset for your platform
+2. Unzip the archive
+3. Move the `gear` binary somewhere in your path
 
 ### With `cargo install`
 
