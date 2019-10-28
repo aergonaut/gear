@@ -27,11 +27,6 @@ struct CommonOpts {
 
 #[derive(StructOpt)]
 enum Subcommand {
-    #[structopt(name = "up", about = "Install all requirements for the project")]
-    Up {
-        #[structopt(flatten)]
-        opts: CommonOpts,
-    },
     #[structopt(
         name = "pr",
         about = "Open a Pull Request for the current branch",
@@ -78,10 +73,6 @@ If not specified, inferred from the `origin` remote, or configuration."#
 fn main() -> crate::errors::Result<()> {
     let program = Gear::from_args();
     let result = match program.cmd {
-        Subcommand::Up { opts } => {
-            opts.log.log_all(Some(opts.verbose.log_level()))?;
-            commands::Up::new().run()
-        }
         Subcommand::PullRequest {
             opts,
             base,
@@ -93,7 +84,6 @@ fn main() -> crate::errors::Result<()> {
             opts.log.log_all(Some(opts.verbose.log_level()))?;
             commands::PullRequest::new(head, base, host, repository, print).run()
         }
-        _ => Err(failure::format_err!("Command not implemented")),
     };
 
     if let Err(error) = result {

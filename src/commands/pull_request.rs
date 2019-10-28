@@ -37,7 +37,7 @@ lazy_static! {
 /// ```plain
 /// $ cat gear.toml
 /// [commands.pr]
-/// base_pattern = "^(release/v\d+)"
+/// base_pattern = '^(release/v\d+)'
 /// $ git branch
 /// release/v25/fix-critical-bug
 /// $ gear pr --print
