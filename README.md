@@ -4,6 +4,10 @@
 
 `gear` is a CLI tool to improve developer QOL.
 
+**Caveat lector:** `gear` is highly customized to my workflow. While it is open
+source and you may use it if you like, please be aware that YMMV if your
+workflow is not nearly exactly (if not exactly) the same as mine.
+
 ## Installation
 
 ### Binary releases
@@ -25,6 +29,10 @@ Run `cargo install --git https://github.com/aergonaut/gear.git`
 1. Clone the repository.
 2. Build with `cargo build --release`
 3. Move `target/release/gear` somewhere in your path
+
+## Usage
+
+See `gear help` or `gear help [SUBCOMMAND]` for usage information.
 
 ## Configuration
 
