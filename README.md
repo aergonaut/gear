@@ -12,13 +12,14 @@ workflow is not nearly exactly (if not exactly) the same as mine.
 
 ### Binary releases
 
-Binary releases are available for macOS and Linux on the [Releases][] tab.
+Binary releases are available for macOS, Linux, and Windows on the [Releases][]
+tab.
 
 [releases]: https://github.com/aergonaut/gear/releases
 
 1. Download the appropriate release asset for your platform
 2. Unzip the archive
-3. Move the `gear` binary somewhere in your path
+3. Move the `gear` executable somewhere in your path
 
 ### With `cargo install`
 
@@ -33,6 +34,8 @@ Run `cargo install --git https://github.com/aergonaut/gear.git`
 ## Usage
 
 See `gear help` or `gear help [SUBCOMMAND]` for usage information.
+
+Documentation is also available [online](https://aergonaut.github.io/gear/gear/index.html).
 
 ## Configuration
 
