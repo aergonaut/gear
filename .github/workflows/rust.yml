@@ -69,4 +69,4 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: dist_windows
-          path: target/release/gear
+          path: target/release/gear.exe
