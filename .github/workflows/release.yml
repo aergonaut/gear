@@ -48,10 +48,27 @@ jobs:
         with:
           name: dist_macos
           path: target/release/gear
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo build --release --verbose
+        env:
+          RUSTFLAGS: -Ctarget-feature=+crt-static
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: dist_windows
+          path: target/release/gear.exe
   release:
     needs:
       - build_linux
       - build_macos
+      - build_windows
     name: Create Release
     runs-on: ubuntu-latest
     steps:
@@ -63,6 +80,10 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: dist_linux
+      - name: Download Windows artifact
+        uses: actions/download-artifact@master
+        with:
+          name: dist_windows
       - name: Create release archives
         run: |
           set -ex
@@ -70,6 +91,7 @@ jobs:
           chmod +x ./dist_linux/gear
           zip --junk-paths gear-macos ./dist_macos/gear
           zip --junk-paths gear-linux ./dist_linux/gear
+          zip --junk-paths gear-windows ./dist_windows/gear
       - name: Create Release
         id: create_release
         uses: actions/create-release@master
@@ -97,4 +119,13 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./gear-linux.zip
           asset_name: gear-linux.zip
+          asset_content_type: application/zip
+      - name: Upload Windows build
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./gear-windows.zip
+          asset_name: gear-windows.zip
           asset_content_type: application/zip
