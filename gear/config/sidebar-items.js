@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["GlobalConfig","Global config file containing global options."],["ProjectConfig","`gear` can be configured on a per-project basis using a project config file."]]});

@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["commands","Subcommands of the `gear` CLI. See individual commands for more documentation."]]});
+initSidebarItems({"mod":[["commands","Subcommands of the `gear` CLI. See individual commands for more documentation."],["config","Configuration documentation."]]});
