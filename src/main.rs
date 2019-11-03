@@ -6,7 +6,7 @@ use crate::commands::Command;
 use structopt::StructOpt;
 
 pub mod commands;
-mod config;
+pub mod config;
 mod errors;
 mod util;
 
